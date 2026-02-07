@@ -1,0 +1,27 @@
+# txAdmin / FiveM runtime
+cache/
+crashes/
+logs/
+admins.json
+
+# txAdmin metadata
+*.bkp
+
+# Server config (secrets)
+server.cfg
+*.cfg
+
+# Default FiveM resources
+resources/[cfx-defaults]/
+resources/[defaultmaps]/
+
+# Node / build junk
+node_modules/
+dist/
+build/
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+.replxx_history
