@@ -12,8 +12,8 @@ server.cfg
 *.cfg
 
 # Default FiveM resources
-resources/[cfx-defaults]/
-resources/[defaultmaps]/
+resources/\[cfx-default\]/
+resources/\[defaultmaps\]/
 
 # Node / build junk
 node_modules/
