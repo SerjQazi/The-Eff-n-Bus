@@ -390,40 +390,85 @@ end
 exports("SetItemData", SetItemData)
 
 ---Checks if you have an item or not
-local function HasItem(source, items, amount)
-    local Player = QBCore.Functions.GetPlayer(source)
-    if not Player then return false end
-    local isTable = type(items) == 'table'
-    local isArray = isTable and table.type(items) == 'array' or false
-    local totalItems = #items
-    local count = 0
-    local kvIndex = 2
-    if isTable and not isArray then
-        totalItems = 0
-        for _ in pairs(items) do totalItems += 1 end
-        kvIndex = 1
+-- local function HasItem(source, items, amount)
+--     local Player = QBCore.Functions.GetPlayer(source)
+--     if not Player then return false end
+--     local isTable = type(items) == 'table'
+--     local isArray = isTable and table.type(items) == 'array' or false
+--     local totalItems = #items
+--     local count = 0
+--     local kvIndex = 2
+--     if isTable and not isArray then
+--         totalItems = 0
+--         for _ in pairs(items) do totalItems += 1 end
+--         kvIndex = 1
+--     end
+--     if isTable then
+--         for k, v in pairs(items) do
+--             local itemKV = {k, v}
+--             local item = GetItemByName(source, itemKV[kvIndex])
+--             if item and ((amount and item.amount >= amount) or (not isArray and item.amount >= v) or (not amount and isArray)) then
+--                 count += 1
+--             end
+--         end
+--         if count == totalItems then
+--             return true
+--         end
+--     else -- Single item as string
+--         local item = GetItemByName(source, items)
+--         if item and (not amount or (item and amount and item.amount >= amount)) then
+--             return true
+--         end
+--     end
+--     return false
+-- end
+
+local function HasItem(items, amount)
+    if not PlayerData or type(PlayerData.items) ~= "table" then
+        return false
     end
+
+    local isTable = type(items) == 'table'
+    local isArray = isTable and table.type(items) == 'array'
+    local total = 0
+    local found = 0
+
     if isTable then
-        for k, v in pairs(items) do
-            local itemKV = {k, v}
-            local item = GetItemByName(source, itemKV[kvIndex])
-            if item and ((amount and item.amount >= amount) or (not isArray and item.amount >= v) or (not amount and isArray)) then
-                count += 1
+        if isArray then
+            total = #items
+        else
+            for _ in pairs(items) do total += 1 end
+        end
+    end
+
+    for _, itemData in pairs(PlayerData.items) do
+        if itemData then
+            if isTable then
+                for k, v in pairs(items) do
+                    local name = isArray and v or k
+                    local req = isArray and amount or v
+                    if itemData.name == name and itemData.amount >= (req or 1) then
+                        found += 1
+                    end
+                end
+                if found >= total then
+                    return true
+                end
+            else
+                if itemData.name == items and (not amount or itemData.amount >= amount) then
+                    return true
+                end
             end
         end
-        if count == totalItems then
-            return true
-        end
-    else -- Single item as string
-        local item = GetItemByName(source, items)
-        if item and (not amount or (item and amount and item.amount >= amount)) then
-            return true
-        end
     end
+
     return false
 end
 
 exports("HasItem", HasItem)
+
+
+-- exports("HasItem", HasItem)
 
 ---Create a usable item with a callback on use
 ---@param itemName string The name of the item to make usable
@@ -2711,6 +2756,61 @@ QBCore.Functions.CreateCallback('inventory:server:ConvertQuality', function(sour
     data.other = other
     cb(data)
 end)
+
+
+-- QBCore Compatibility Exports
+exports('AddItem', function(source, item, amount, slot, info)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return false end
+    return Player.Functions.AddItem(item, amount, slot, info)
+end)
+
+exports('RemoveItem', function(source, item, amount, slot)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return false end
+    return Player.Functions.RemoveItem(item, amount, slot)
+end)
+
+exports('HasItem', function(source, item, amount)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return false end
+    return Player.Functions.GetItemByName(item)
+end)
+
+exports('GetItemBySlot', function(source, slot)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then return nil end
+    return Player.PlayerData.items[slot]
+end)
+
+
+---STEP 2 — USEABLE ITEM BRIDGE (CRITICAL)
+RegisterNetEvent('qb-inventory:server:UseItem', function(item)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then return end
+
+    local itemData = Player.Functions.GetItemByName(item.name)
+    if not itemData then return end
+
+    if QBCore.Shared.Items[item.name].useable then
+        QBCore.Functions.UseItem(src, item.name)
+    end
+end)
+
+
+---STEP 3 — RESTORE QBCORE USEABLE ITEMS
+CreateThread(function()
+    for itemName, item in pairs(QBCore.Shared.Items) do
+        if item.useable then
+            QBCore.Functions.CreateUseableItem(itemName, function(source, itemData)
+                TriggerClientEvent('qb-inventory:client:UseItem', source, itemData)
+            end)
+        end
+    end
+end)
+
+
 
 -- Warning Messages
 

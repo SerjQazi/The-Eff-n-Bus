@@ -113,21 +113,103 @@ RegisterNetEvent('qb-shops:server:PaySlip', function(drops)
     TriggerClientEvent('QBCore:Notify', src, Lang:t('success.you_earned', { value = payment }), 'success')
 end)
 
--- Opening shops
+-- Opening shops (QBCore / ps-inventory compatibility)
 
 RegisterNetEvent('qb-shops:server:openShop', function(data)
     local src = source
     local shopName = data.shop
     local shopData = Config.Locations[shopName]
     if not shopData then return end
+
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
+
     local playerData = Player.PlayerData
     local products = shopData.products
     local items = {}
 
+    -- Handle stock-based shops
     if shopData.useStock then
-        local shopInvJson = json.decode(LoadResourceFile(GetCurrentResourceName(), Config.ShopsInvJsonFile))
+        local shopInvJson = json.decode(
+            LoadResourceFile(GetCurrentResourceName(), Config.ShopsInvJsonFile)
+        )
+        if shopInvJson and shopInvJson[shopName] then
+            for k, v in pairs(shopInvJson[shopName].products) do
+                if products[k] then
+                    products[k].amount = v.amount
+                end
+            end
+        end
+    end
+
+    -- Build filtered item list
+    for i = 1, #products do
+        local curProduct = products[i]
+        local allow = true
+
+        if curProduct.requiredGrade and playerData.job.grade.level < curProduct.requiredGrade then
+            allow = false
+        end
+
+        if allow and curProduct.requiredJob and not checkTable(playerData.job.name, curProduct.requiredJob) then
+            allow = false
+        end
+
+        if allow and curProduct.requiredGang and not checkTable(playerData.gang.name, curProduct.requiredGang) then
+            allow = false
+        end
+
+        if allow and curProduct.requiredLicense and not checkTable(playerData.metadata['licences'], curProduct.requiredLicense) then
+            allow = false
+        end
+
+        if allow then
+            curProduct.slot = #items + 1
+            items[#items + 1] = curProduct
+        end
+    end
+
+    -- OPEN INVENTORY THROUGH INVENTORY BRIDGE
+    TriggerEvent(
+        'inventory:server:OpenInventory',
+        'shop',
+        shopName,
+        {
+            label = shopData.label,
+            items = items
+        }
+    )
+end)
+
+
+
+-- -- Opening shops
+
+RegisterNetEvent('qb-shops:server:openShop', function(data)
+    local src = source
+
+    -- SAFETY GUARD
+    if type(data) ~= "table" or not data.shop then
+        print("^1[qb-shops] openShop called without shop data^7")
+        return
+    end
+
+    local shopName = data.shop
+    local shopData = Config.Locations[shopName]
+    if not shopData then return end
+
+    local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then return end
+
+    local playerData = Player.PlayerData
+    local products = shopData.products
+    local items = {}
+
+    -- Stock handling
+    if shopData.useStock then
+        local shopInvJson = json.decode(
+            LoadResourceFile(GetCurrentResourceName(), Config.ShopsInvJsonFile) or "{}"
+        )
         if shopInvJson[shopName] then
             for k, v in pairs(shopInvJson[shopName].products) do
                 if products[k] then
@@ -137,38 +219,92 @@ RegisterNetEvent('qb-shops:server:openShop', function(data)
         end
     end
 
+    -- Filter products
     for i = 1, #products do
         local curProduct = products[i]
-        local addProduct = true
+        local allow = true
 
         if curProduct.requiredGrade and playerData.job.grade.level < curProduct.requiredGrade then
-            addProduct = false
+            allow = false
+        end
+        if allow and curProduct.requiredJob and not checkTable(playerData.job.name, curProduct.requiredJob) then
+            allow = false
+        end
+        if allow and curProduct.requiredGang and not checkTable(playerData.gang.name, curProduct.requiredGang) then
+            allow = false
+        end
+        if allow and curProduct.requiredLicense and not checkTable(playerData.metadata.licences, curProduct.requiredLicense) then
+            allow = false
         end
 
-        if addProduct and curProduct.requiredJob and not checkTable(playerData.job.name, curProduct.requiredJob) then
-            addProduct = false
-        end
-
-        if addProduct and curProduct.requiredGang and not checkTable(playerData.gang.name, curProduct.requiredGang) then
-            addProduct = false
-        end
-
-        if addProduct and curProduct.requiredLicense and not checkTable(playerData.metadata['licences'], curProduct.requiredLicense) then
-            addProduct = false
-        end
-
-        if addProduct then
+        if allow then
             curProduct.slot = #items + 1
             items[#items + 1] = curProduct
         end
     end
 
-    exports['qb-inventory']:CreateShop({
-        name = shopName,
+    -- OPEN VIA INVENTORY
+    TriggerEvent('inventory:server:OpenInventory', 'shop', shopName, {
         label = shopData.label,
-        slots = shopData.slots,
-        coords = shopData.coords,
-        items = items,
+        items = items
     })
-    exports['qb-inventory']:OpenShop(src, shopName)
 end)
+
+
+-- RegisterNetEvent('qb-shops:server:openShop', function(data)
+--     local src = source
+--     local shopName = data.shop
+--     local shopData = Config.Locations[shopName]
+--     if not shopData then return end
+--     local Player = QBCore.Functions.GetPlayer(src)
+--     if not Player then return end
+--     local playerData = Player.PlayerData
+--     local products = shopData.products
+--     local items = {}
+
+--     if shopData.useStock then
+--         local shopInvJson = json.decode(LoadResourceFile(GetCurrentResourceName(), Config.ShopsInvJsonFile))
+--         if shopInvJson[shopName] then
+--             for k, v in pairs(shopInvJson[shopName].products) do
+--                 if products[k] then
+--                     products[k].amount = v.amount
+--                 end
+--             end
+--         end
+--     end
+
+--     for i = 1, #products do
+--         local curProduct = products[i]
+--         local addProduct = true
+
+--         if curProduct.requiredGrade and playerData.job.grade.level < curProduct.requiredGrade then
+--             addProduct = false
+--         end
+
+--         if addProduct and curProduct.requiredJob and not checkTable(playerData.job.name, curProduct.requiredJob) then
+--             addProduct = false
+--         end
+
+--         if addProduct and curProduct.requiredGang and not checkTable(playerData.gang.name, curProduct.requiredGang) then
+--             addProduct = false
+--         end
+
+--         if addProduct and curProduct.requiredLicense and not checkTable(playerData.metadata['licences'], curProduct.requiredLicense) then
+--             addProduct = false
+--         end
+
+--         if addProduct then
+--             curProduct.slot = #items + 1
+--             items[#items + 1] = curProduct
+--         end
+--     end
+
+--     exports['qb-inventory']:CreateShop({
+--         name = shopName,
+--         label = shopData.label,
+--         slots = shopData.slots,
+--         coords = shopData.coords,
+--         items = items,
+--     })
+--     exports['qb-inventory']:OpenShop(src, shopName)
+-- end)

@@ -32,7 +32,18 @@ local function listenForControl()
         while listen do
             if IsControlJustPressed(0, 38) then -- E
                 exports['qb-core']:KeyPressed()
-                TriggerServerEvent('qb-shops:server:openShop', { shop = currentShop })
+                -- TriggerServerEvent('qb-shops:server:openShop', { shop = currentShop })
+                
+                local src = source
+                local shop = data.shop
+
+                TriggerServerEvent(
+                    'inventory:server:OpenInventory',
+                    'shop',
+                    shop,
+                    Config.Products[shop]
+                )
+
                 listen = false
                 break
             end
