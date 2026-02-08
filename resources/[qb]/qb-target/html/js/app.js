@@ -1,128 +1,171 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const config = {
-        StandardEyeIcon: "fas fa-eye",
-        StandardColor: "var(--md-on-surface, white)",
-        SuccessColor: "var(--md-success, #386a20)",
-    };
-
-    const targetEye = document.getElementById("target-eye");
-    const targetLabel = document.getElementById("target-label");
-    const TargetEyeStyleObject = targetEye.style;
-
-    function OpenTarget() {
-        targetLabel.textContent = "";
-        targetEye.style.display = "block";
-        targetEye.className = config.StandardEyeIcon;
-        TargetEyeStyleObject.color = config.StandardColor;
-    }
-
-    function CloseTarget() {
-        targetLabel.textContent = "";
-        targetEye.style.display = "none";
-    }
-
-    function createTargetOption(index, itemData) {
-        if (itemData !== null) {
-            index = Number(index) + 1;
-            const targetOption = document.createElement("div");
-            targetOption.id = `target-option-${index}`;
-            const targetIcon = document.createElement("span");
-            targetIcon.id = `target-icon-${index}`;
-            const icon = document.createElement("i");
-            icon.className = itemData.icon;
-            targetIcon.appendChild(icon);
-            targetIcon.appendChild(document.createTextNode(" "));
-            targetOption.appendChild(targetIcon);
-            targetOption.appendChild(document.createTextNode(itemData.label));
-            targetLabel.appendChild(targetOption);
+const Targeting = Vue.createApp({
+    data() {
+        return {
+            Show: false, // leave this
+            ChangeTextIconColor: false, // This is if you want to change the color of the icon next to the option text with the text color
+            StandardEyeIcon: "", // This is the default eye icon
+            CurrentIcon: this.StandardEyeIcon, // leave this
+            SuccessColor: "#08f7c5", // This is the color when the target has found the option
+            StandardColor: "white", // This is the standard color, change this to the same as the StandardColor if you have changed it
+            TargetEyeStyleObject: {
+                color: this.StandardColor, // leave this
+            },
+            HexgonStyleObject: {
+                textShadow: "#ffffff00 1px 0 10px",
+                webkitTextStroke: "1.5px #ffffff",
+            },
         }
-    }
+    },
+    destroyed() {
+        window.removeEventListener("message", this.messageListener);
+        window.removeEventListener("mousedown", this.mouseListener);
+        window.removeEventListener("keydown", this.keyListener);
+        window.removeEventListener("mouseover", this.mouseOverListener);
+        window.removeEventListener("mouseout", this.mouseOutListener);
+    },
+    mounted() {
+        this.targetLabel = document.getElementById("target-label");
 
-    function FoundTarget(item) {
-        if (item.data) {
-            targetEye.className = item.data;
-        }
-        TargetEyeStyleObject.color = config.SuccessColor;
-        targetEye.classList.add("target-success");
-        targetLabel.textContent = "";
-        for (let [index, itemData] of Object.entries(item.options)) {
-            createTargetOption(index, itemData);
-        }
-    }
+        this.messageListener = window.addEventListener("message", (event) => {
+            switch (event.data.response) {
+                case "openTarget":
+                    this.OpenTarget();
+                    break;
+                case "closeTarget":
+                    this.CloseTarget();
+                    break;
+                case "foundTarget":
+                    this.FoundTarget(event.data);
+                    break;
+                case "validTarget":
+                    this.ValidTarget(event.data);
+                    break;
+                case "leftTarget":
+                    this.LeftTarget();
+                    break;
+            }
+        });
 
-    function ValidTarget(item) {
-        targetLabel.textContent = "";
-        for (let [index, itemData] of Object.entries(item.data)) {
-            createTargetOption(index, itemData);
-        }
-    }
+        this.mouseListener = window.addEventListener("mousedown", (event) => {
+            let element = event.target;
+            if (element.id) {
+                const split = element.id.split("-");
+                if (split[0] === "target" && split[1] !== "eye" && event.button == 0) {
+                    fetch(`https://${GetParentResourceName()}/selectTarget`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json; charset=UTF-8" },
+                        body: JSON.stringify(split[2])
+                    }).then(resp => resp.json()).then(_ => {});
+                    this.targetLabel.innerHTML = "";
+                    this.Show = false;
+                }
+            }
 
-    function LeftTarget() {
-        targetLabel.textContent = "";
-        TargetEyeStyleObject.color = config.StandardColor;
-        targetEye.className = config.StandardEyeIcon;
-        targetEye.classList.remove("target-success");
-    }
-
-    function handleMouseDown(event) {
-        const element = event.target;
-        if (element.id) {
-            const split = element.id.split("-");
-            if (split[0] === "target" && split[1] !== "eye" && event.button === 0) {
-                fetch(`https://${GetParentResourceName()}/selectTarget`, {
+            if (event.button == 2) {
+                this.LeftTarget();
+                fetch(`https://${GetParentResourceName()}/leftTarget`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json; charset=UTF-8" },
-                    body: JSON.stringify(split[2]),
-                }).catch((error) => console.error("Error:", error));
-                targetLabel.textContent = "";
+                    body: ""
+                }).then(resp => resp.json()).then(_ => {});
             }
-        }
-        if (event.button === 2) {
-            LeftTarget();
-            fetch(`https://${GetParentResourceName()}/leftTarget`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json; charset=UTF-8" },
-                body: "",
-            }).catch((error) => console.error("Error:", error));
+        });
+
+        this.keyListener = window.addEventListener("keydown", (event) => {
+            if (event.key == "Escape" || event.key == "Backspace") {
+                this.CloseTarget();
+                fetch(`https://${GetParentResourceName()}/closeTarget`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json; charset=UTF-8" },
+                    body: ""
+                }).then(resp => resp.json()).then(_ => {});
+            }
+        });
+
+        this.mouseOverListener = window.addEventListener("mouseover", (event) => {
+            const element = event.target;
+            if (element.id) {
+                const split = element.id.split("-");
+                if (split[0] === "target" && split[1] === "option") {
+                    event.target.style.color = this.SuccessColor;
+                    if (this.ChangeTextIconColor) document.getElementById(`target-icon-${index}`).style.color = this.SuccessColor;
+                }
+            }
+        });
+
+        this.mouseOutListener = window.addEventListener("mouseout", (event) => {
+            const element = event.target;
+            if (element.id) {
+                const split = element.id.split("-");
+                if (split[0] === "target" && split[1] === "option") {
+                    element.style.color = this.StandardColor;
+                    if (this.ChangeTextIconColor) document.getElementById(`target-icon-${index}`).style.color = this.StandardColor;
+                }
+            }
+        });
+    },
+    methods: {
+        OpenTarget() {
+            this.targetLabel.innerHTML = "";
+            this.Show = true;
+            this.TargetEyeStyleObject.color = this.StandardColor;
+            this.HexgonStyleObject.textShadow = "#ffffff00 1px 0 10px";
+            this.HexgonStyleObject.webkitTextStroke = "1.5px #ffffff";
+        },
+
+        CloseTarget() {
+            this.targetLabel.innerHTML = "";
+            this.TargetEyeStyleObject.color = this.StandardColor;
+            this.Show = false;
+            this.CurrentIcon = this.StandardEyeIcon;
+            this.HexgonStyleObject.textShadow = "#ffffff00 1px 0 10px";
+            this.HexgonStyleObject.webkitTextStroke = "1.5px #ffffff";
+        },
+
+        FoundTarget(item) {
+            if (item.data) this.CurrentIcon = item.data;
+            else this.CurrentIcon = this.StandardEyeIcon;
+            this.TargetEyeStyleObject.color = this.SuccessColor;
+            this.HexgonStyleObject.textShadow = "#00ffe1 0px 0 20px";
+            this.HexgonStyleObject.webkitTextStroke = "1.5px #7fc8bb";
+        },
+
+        ValidTarget(item) {
+            this.targetLabel.innerHTML = "";
+            for (let [index, itemData] of Object.entries(item.data)) {
+                if (itemData !== null) {
+                    index = Number(index) + 1;
+
+                    if (this.ChangeTextIconColor) {
+                        this.targetLabel.innerHTML +=
+                        `<div id="target-option-${index}" style=" color: ${this.StandardColor}; background-color: #3c57577d; border-radius: 8px ;padding: 5px 5px; margin-bottom: 5px;">
+                            <span id="target-icon-${index}" style="color: ${this.StandardColor};">
+                                <i class="${itemData.icon}"></i>
+                            </span>
+                            ${itemData.label}
+                        </div>`;
+                    } else {
+                        this.targetLabel.innerHTML +=
+                        `<div id="target-option-${index}" style=" color: ${this.StandardColor}; background-color: #3c57577d; border-radius: 8px ;padding: 5px 5px; margin-bottom: 5px;">
+                            <span id="target-icon-${index}" style="color: ${this.SuccessColor};">
+                                <i class="${itemData.icon}"></i>
+                            </span>
+                            ${itemData.label}
+                        </div>`;
+                    }
+                }
+            }
+        },
+
+        LeftTarget() {
+            this.targetLabel.innerHTML = "";
+            this.CurrentIcon = this.StandardEyeIcon;
+            this.TargetEyeStyleObject.color = this.StandardColor;
+            this.HexgonStyleObject.textShadow = "#ffffff00 1px 0 10px";
+            this.HexgonStyleObject.webkitTextStroke = "1.5px #ffffff";
         }
     }
-
-    function handleKeyDown(event) {
-        if (event.key === "Escape" || event.key === "Backspace") {
-            CloseTarget();
-            fetch(`https://${GetParentResourceName()}/closeTarget`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json; charset=UTF-8" },
-                body: "",
-            }).catch((error) => console.error("Error:", error));
-        }
-    }
-
-    window.addEventListener("message", function (event) {
-        switch (event.data.response) {
-            case "openTarget":
-                OpenTarget();
-                break;
-            case "closeTarget":
-                CloseTarget();
-                break;
-            case "foundTarget":
-                FoundTarget(event.data);
-                break;
-            case "validTarget":
-                ValidTarget(event.data);
-                break;
-            case "leftTarget":
-                LeftTarget();
-                break;
-        }
-    });
-
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("keydown", handleKeyDown);
-
-    window.addEventListener("unload", function () {
-        window.removeEventListener("mousedown", handleMouseDown);
-        window.removeEventListener("keydown", handleKeyDown);
-    });
 });
+
+Targeting.use(Quasar, { config: {} });
+Targeting.mount("#target-wrapper");
