@@ -763,6 +763,10 @@ local Vehicles = {
     { model = 'openwheel1',      name = 'BR8',                           brand = 'Benefactor',      price = 100000,  category = 'openwheel',      type = 'automobile', shop = 'none' },
     { model = 'formula2',        name = 'R88',                           brand = 'Ocelot',          price = 100000,  category = 'openwheel',      type = 'automobile', shop = 'none' },
     { model = 'formula',         name = 'PR4',                           brand = 'Progen',          price = 100000,  category = 'openwheel',      type = 'automobile', shop = 'none' },
+
+    --- The Eff'n Corner CUSTOMS ---
+    --- ####################### ----
+    { model = 'runner',      name = 'Runner',                           brand = 'Benefactor',        price = 150000,  category = 'commercial',      type = 'automobile', shop = 'none' },
 }
 
 QBShared.VehicleHashes = QBShared.VehicleHashes or {}
