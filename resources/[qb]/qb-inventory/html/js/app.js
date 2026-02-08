@@ -2713,7 +2713,7 @@ var requiredItemOpen = false;
     totalWeight = 0;
     totalWeightOther = 0;
 
-    $(".player-inv-label").html("Player Backpack");
+    $(".player-inv-label").html("Prison Pocket");
     $(".player-inventory").find(".item-slot").remove();
     $(".ply-hotbar-inventory").find(".item-slot").remove();
     $(".ply-iteminfo-container").css("opacity", "0.0");
