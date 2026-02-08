@@ -33,19 +33,19 @@ Config.EnableOutline = false
 Config.Toggle = false
 
 -- Draw a Sprite on the center of a PolyZone to hint where it's located
-Config.DrawSprite = false
+Config.DrawSprite = true
 
 -- The default distance to draw the Sprite
 Config.DrawDistance = 10.0
 
 -- The color of the sprite in rgb, the first value is red, the second value is green, the third value is blue and the last value is alpha (opacity). Here is a link to a color picker to get these values: https://htmlcolorcodes.com/color-picker/
-Config.DrawColor = {255, 255, 255, 255}
+Config.DrawColor = { 255, 255, 255, 255 }
 
 -- The color of the sprite in rgb when the PolyZone is targeted, the first value is red, the second value is green, the third value is blue and the last value is alpha (opacity). Here is a link to a color picker to get these values: https://htmlcolorcodes.com/color-picker/
-Config.SuccessDrawColor = {30, 144, 255, 255}
+Config.SuccessDrawColor = { 220, 20, 60, 255 }
 
 -- The color of the outline in rgb, the first value is red, the second value is green, the third value is blue and the last value is alpha (opacity). Here is a link to a color picker to get these values: https://htmlcolorcodes.com/color-picker/
-Config.OutlineColor = {255, 255, 255, 255}
+Config.OutlineColor = { 255, 255, 255, 255 }
 
 -- Enable default options (Toggling vehicle doors)
 Config.EnableDefaultOptions = true
@@ -58,6 +58,9 @@ Config.OpenKey = 'LMENU' -- Left Alt
 
 -- Control for key press detection on the context menu, it's the Right Mouse Button by default, controls are found here https://docs.fivem.net/docs/game-references/controls/
 Config.MenuControlKey = 238
+
+-- Whether to disable ALL controls or only specificed ones
+Config.DisableControls = true
 
 -------------------------------------------------------------------------------
 -- Target Configs
@@ -78,47 +81,6 @@ Config.PolyZones = {
 }
 
 Config.TargetBones = {
-	["main"] = {
-		bones = {
-			"seat_dside_f",
-			"seat_pside_f",
-			"seat_dside_r",
-			"seat_pside_r",
-			"door_dside_f",
-			"door_dside_r",
-			"door_pside_f",
-			"door_pside_r",
-		
-		},
-		options = {
-			{
-				type = "client",
-				event = 'police:client:PutPlayerInVehicle',
-				icon = "fas fa-user-plus",
-				label = "Seat in Vehicle",
-			},
-			{
-				type = "client",
-				event = "police:client:SetPlayerOutVehicle",
-				icon = "fas fa-user-minus",
-				label = "Take out Vehicle",
-			},
-			{
-				type = "client",
-				event = "police:client:ImpoundVehicle",
-				icon = "fas fa-car",
-				label = "Impound Vehicle",
-				job = {["police"] = 0, ["sasp"] = 0, ["saspr"] = 0, ["bcso"] = 0},
-			},
-			{
-				type = "client",
-				event = "qb-trunk:client:GetIn",
-				icon = "fas fa-user-secret",
-				label = "Get in Trunk",
-			},
-		},
-		distance = 2.0
-	},
 
 }
 
@@ -139,46 +101,7 @@ Config.GlobalObjectOptions = {
 }
 
 Config.GlobalPlayerOptions = {
-    options = {
-        {
-            type = "client",
-            event = "qb-phone:client:GiveContactDetails",
-            icon = "fas fa-address-book",
-            label = "Give Contact Details",
-        },
-        {
-            event = "police:client:RobPlayer",
-            icon = "fas fa-user-secret",
-            label = "Rob Player",
-        },
-        {
-            type = "client",
-            event = "police:client:CuffPlayer",
-            icon = "fas fa-hands",
-            label = "Cuff / Uncuff",
-            job = {["police"] = 0, ["sasp"] = 0, ["saspr"] = 0, ["bcso"] = 0},
-        },
-        {
-          type = "client",
-          event = "police:client:EscortPlayer",
-          icon = "fas fa-key",
-          label = "Escort",
-        },
-        {
-            type = "client",
-            event = "police:client:PutPlayerInVehicle",
-            icon = "fas fa-chevron-circle-left",
-            job = {["police"] = 0, ["sasp"] = 0, ["saspr"] = 0, ["bcso"] = 0},
-            label = "Place in Vehicle",
-        },
-        {
-            type = "client",
-            event = "police:client:SetPlayerOutVehicle",
-            icon = "fas fa-chevron-circle-right",
-            job = {["police"] = 0, ["sasp"] = 0, ["saspr"] = 0, ["bcso"] = 0},
-            label = "Take out of Vehicle",
-        },
-    }
+
 }
 
 Config.Peds = {
@@ -199,7 +122,7 @@ CreateThread(function()
 	if state ~= 'missing' then
 		local timeout = 0
 		while state ~= 'started' and timeout <= 100 do
-			timeout += 1
+			timeout = timeout + 1
 			state = GetResourceState('qb-core')
 			Wait(0)
 		end

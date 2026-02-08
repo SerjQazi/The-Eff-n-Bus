@@ -1,7 +1,7 @@
 Config = {}
 Config.OpenMenu = 'I'             -- https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard/
 Config.StressChance = 0.1         -- Default: 10% -- Percentage Stress Chance When Shooting (0-1)
-Config.UseMPH = false              -- If true speed math will be done as MPH, if false KPH will be used (YOU HAVE TO CHANGE CONTENT IN STYLES.CSS TO DISPLAY THE CORRECT TEXT)
+Config.UseMPH = true              -- If true speed math will be done as MPH, if false KPH will be used (YOU HAVE TO CHANGE CONTENT IN STYLES.CSS TO DISPLAY THE CORRECT TEXT)
 Config.MinimumStress = 50         -- Minimum Stress Level For Screen Shaking
 Config.MinimumSpeedUnbuckled = 50 -- Going Over This Speed Unbuckled Will Cause Stress
 Config.MinimumSpeed = 100         -- Going Over This Speed While Buckled Will Cause Stress
@@ -203,6 +203,10 @@ Config.vehicles = {
         [5] = {3.885, 2.312, 1.51848, 1.0688, 0.90},--5 Audi 4 trans
         [6] = {3.33,2.5, 2.0, 1.633, 1.089, 0.90},--6 2008 Subaru Impreza WRC2008 (S14) trans
     },
+    [GetHashKey('futo')] = {
+        [5] = {3.33, 1.92, 1.36, 1.05, 0.90},--5
+        [6] = {3.33, 1.95, 1.39, 1.09, 0.95, 0.90},--6
+    },
     -- [GetHashKey('audquattros')] = { 
     --     [5] = {3.885, 2.312, 1.51848, 1.0688, 0.90},--5 Audi 4 trans
     --     [6] = {3.33,2.5, 2.0, 1.633, 1.089, 0.90},--6 2008 Subaru Impreza WRC2008 (S14) trans
@@ -234,5 +238,5 @@ Config.vehicles = {
 Config.enginebrake = true -- brakes the car if you downshift the wrong way
 
 
-Config.gearhud = 2 -- if 1 - show gear / if 2 show gear and km/h and Rpm from 0 to 1 / if 0 disable hud
+Config.gearhud = 1 -- if 1 - show gear / if 2 show gear and km/h and Rpm from 0 to 1 / if 0 disable hud
 
