@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CVehicleModelInfoVariation>
+    <variationData>
+        <Item>
+            <modelName>runner</modelName>
+             <colors>
+                <Item>
+                    <indices content="char_array">
+                        132
+                        132
+                        2
+                        2
+                    </indices>
+                    <liveries>
+  <Item>0</Item>
+  <Item>1</Item>
+  <Item>2</Item>
+  <Item>3</Item>
+  <Item>4</Item>
+  <Item>5</Item>
+  <Item>6</Item>
+  <Item>7</Item>
+  <Item>8</Item>
+</liveries>
+                </Item>
+            </colors>
+            <kits>
+                <Item>78362_runner_modkit</Item>
+            </kits>
+            <windowsWithExposedEdges />
+            <plateProbabilities>
+                <Probabilities />
+            </plateProbabilities>
+            <lightSettings value="0" />
+            <sirenSettings value="0" />
+        </Item>
+    </variationData>
+</CVehicleModelInfoVariation>
