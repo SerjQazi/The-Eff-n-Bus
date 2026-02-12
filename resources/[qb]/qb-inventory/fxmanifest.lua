@@ -1,41 +1,37 @@
 fx_version 'cerulean'
 game 'gta5'
-
-description 'qb-inventory'
-version '1.0.2'
+lua54 'yes'
+author 'Kakarot'
+description 'Player inventory system providing a variety of features for storing and managing items'
+version '2.0.0'
 
 shared_scripts {
-	'config.lua',
-	'@qb-weapons/config.lua'
-}
-
-server_scripts {
-	'@oxmysql/lib/MySQL.lua',
-	'server/main.lua',
-	'server/visual.lua',
+    '@qb-core/shared/locale.lua',
+    'locales/en.lua',
+    'locales/*.lua',
+    'config/*.lua',
 }
 
 client_scripts {
-	'client/main.lua',
-	'client/visual.lua',
+    'client/main.lua',
+    'client/drops.lua',
+    'client/vehicles.lua',
 }
 
-
-ui_page {
-	'html/ui.html'
+server_scripts {
+    '@oxmysql/lib/MySQL.lua',
+    'server/main.lua',
+    'server/functions.lua',
+    'server/commands.lua',
 }
+
+ui_page 'html/index.html'
 
 files {
-	'html/ui.html',
-	'html/css/main.css',
-	'html/js/app.js',
-	'html/images/*.svg',
-	'html/images/*.png',
-	'html/images/*.jpg',
-	'html/inventory_images/*.png',
-	'html/ammo_images/*.png',
-	'html/attachment_images/*.png',
-	'html/*.ttf'
+    'html/index.html',
+    'html/main.css',
+    'html/app.js',
+    'html/images/*.png',
 }
 
-lua54 'yes'
+dependency 'qb-weapons'
