@@ -1,10 +1,12 @@
-# qb-inventory
+# ps-inventory
 
 ## Dependencies
+
 - [qb-core](https://github.com/qbcore-framework/qb-core)
 - [qb-smallresources](https://github.com/qbcore-framework/qb-smallresources) - For logging transfer and other history
 
 ## Features
+
 - Stashes (Personal and/or Shared)
 - Vehicle Trunk & Glovebox
 - Weapon Attachments
@@ -12,20 +14,27 @@
 - Item Drops
 
 ## Documentation
-https://docs.qbcore.org/qbcore-documentation/qbcore-resources/qb-inventory
+
+https://docs.qbcore.org/qbcore-documentation/qbcore-resources/ps-inventory
 
 ## Installation
+
 ### Manual
+
 - Download the script and put it in the `[qb]` directory.
-- Import `qb-inventory.sql` in your database
+- Import `ps-inventory.sql` in your database
 - Add the following code to your server.cfg/resouces.cfg
 
-# Migrating from old qb-inventory
+# Migrating from old ps-inventory
 
 ## Database
+
 ### Upload the new `inventory.sql` file to create the new `inventories` table
+
 ### Use the provided `migrate.sql` file to migrate all of your saved inventory data from stashes, trunks, etc
+
 ### Once complete, you can delete `gloveboxitems` `stashitems` and `trunkitems` tables from your database
+
 ```sql
 CREATE TABLE IF NOT EXISTS `inventories` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,

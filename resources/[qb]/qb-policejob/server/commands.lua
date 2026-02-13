@@ -232,14 +232,14 @@ QBCore.Commands.Add('takedna', Lang:t('commands.takedna'), { { name = 'id', help
     local Player = QBCore.Functions.GetPlayer(src)
     local OtherPlayer = QBCore.Functions.GetPlayer(tonumber(args[1]))
     if not OtherPlayer or Player.PlayerData.job.type ~= 'leo' or not Player.PlayerData.job.onduty then return end
-    if exports['qb-inventory']:RemoveItem(src, 'empty_evidence_bag', 1, false, 'qb-policejob:takedna') then
+    if exports['ps-inventory']:RemoveItem(src, 'empty_evidence_bag', 1, false, 'qb-policejob:takedna') then
         local info = {
             label = Lang:t('info.dna_sample'),
             type = 'dna',
             dnalabel = DnaHash(OtherPlayer.PlayerData.citizenid)
         }
-        if not exports['qb-inventory']:AddItem(src, 'filled_evidence_bag', 1, false, info, 'qb-policejob:takedna') then return end
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['filled_evidence_bag'], 'add')
+        if not exports['ps-inventory']:AddItem(src, 'filled_evidence_bag', 1, false, info, 'qb-policejob:takedna') then return end
+        TriggerClientEvent('ps-inventory:client:ItemBox', src, QBCore.Shared.Items['filled_evidence_bag'], 'add')
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t('error.have_evidence_bag'), 'error')
     end

@@ -1,14 +1,16 @@
 # qb-management
+
 - Manage employees online or offline!
 - Access a personal boss level stash!
 - Allows for multiple boss menu locations!
 
 ## Dependencies
+
 - [qb-core](https://github.com/qbcore-framework/qb-core)
 - [qb-smallresources](https://github.com/qbcore-framework/qb-smallresources) (For the Logs)
 - [qb-input](https://github.com/qbcore-framework/qb-input)
 - [qb-menu](https://github.com/qbcore-framework/qb-menu)
-- [qb-inventory](https://github.com/qbcore-framework/qb-inventory)
+- [ps-inventory](https://github.com/qbcore-framework/ps-inventory)
 - [qb-clothing](https://github.com/qbcore-framework/qb-clothing)
 
 # License

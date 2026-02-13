@@ -136,7 +136,7 @@ end
 
 -- Events
 
-RegisterNetEvent('qb-inventory:server:openVending', function(data)
+RegisterNetEvent('ps-inventory:server:openVending', function(data)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
@@ -150,7 +150,7 @@ RegisterNetEvent('qb-inventory:server:openVending', function(data)
     OpenShop(src, 'vending')
 end)
 
-RegisterNetEvent('qb-inventory:server:closeInventory', function(inventory)
+RegisterNetEvent('ps-inventory:server:closeInventory', function(inventory)
     local src = source
     local QBPlayer = QBCore.Functions.GetPlayer(src)
     if not QBPlayer then return end
@@ -164,7 +164,7 @@ RegisterNetEvent('qb-inventory:server:closeInventory', function(inventory)
     if Drops[inventory] then
         Drops[inventory].isOpen = false
         if #Drops[inventory].items == 0 and not Drops[inventory].isOpen then -- if no listeed items in the drop on close
-            TriggerClientEvent('qb-inventory:client:removeDropTarget', -1, Drops[inventory].entityId)
+            TriggerClientEvent('ps-inventory:client:removeDropTarget', -1, Drops[inventory].entityId)
             Wait(500)
             local entity = NetworkGetEntityFromNetworkId(Drops[inventory].entityId)
             if DoesEntityExist(entity) then DeleteEntity(entity) end
@@ -177,17 +177,17 @@ RegisterNetEvent('qb-inventory:server:closeInventory', function(inventory)
     MySQL.prepare('INSERT INTO inventories (identifier, items) VALUES (?, ?) ON DUPLICATE KEY UPDATE items = ?', { inventory, json.encode(Inventories[inventory].items), json.encode(Inventories[inventory].items) })
 end)
 
-RegisterNetEvent('qb-inventory:server:useItem', function(item)
+RegisterNetEvent('ps-inventory:server:useItem', function(item)
     local src = source
     local itemData = GetItemBySlot(src, item.slot)
     if not itemData then return end
     local itemInfo = QBCore.Shared.Items[itemData.name]
     if itemData.type == 'weapon' then
         TriggerClientEvent('qb-weapons:client:UseWeapon', src, itemData, itemData.info.quality and itemData.info.quality > 0)
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, itemInfo, 'use')
+        TriggerClientEvent('ps-inventory:client:ItemBox', src, itemInfo, 'use')
     elseif itemData.name == 'id_card' then
         UseItem(itemData.name, src, itemData)
-        TriggerClientEvent('qb-inventory:client:ItemBox', source, itemInfo, 'use')
+        TriggerClientEvent('ps-inventory:client:ItemBox', source, itemInfo, 'use')
         local playerPed = GetPlayerPed(src)
         local playerCoords = GetEntityCoords(playerPed)
         local players = QBCore.Functions.GetPlayers()
@@ -212,7 +212,7 @@ RegisterNetEvent('qb-inventory:server:useItem', function(item)
         end
     elseif itemData.name == 'driver_license' then
         UseItem(itemData.name, src, itemData)
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, itemInfo, 'use')
+        TriggerClientEvent('ps-inventory:client:ItemBox', src, itemInfo, 'use')
         local playerPed = GetPlayerPed(src)
         local playerCoords = GetEntityCoords(playerPed)
         local players = QBCore.Functions.GetPlayers()
@@ -235,11 +235,11 @@ RegisterNetEvent('qb-inventory:server:useItem', function(item)
         end
     else
         UseItem(itemData.name, src, itemData)
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, itemInfo, 'use')
+        TriggerClientEvent('ps-inventory:client:ItemBox', src, itemInfo, 'use')
     end
 end)
 
-RegisterNetEvent('qb-inventory:server:openDrop', function(dropId)
+RegisterNetEvent('ps-inventory:server:openDrop', function(dropId)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then return end
@@ -258,28 +258,28 @@ RegisterNetEvent('qb-inventory:server:openDrop', function(dropId)
         inventory = drop.items
     }
     drop.isOpen = true
-    TriggerClientEvent('qb-inventory:client:openInventory', source, Player.PlayerData.items, formattedInventory)
+    TriggerClientEvent('ps-inventory:client:openInventory', source, Player.PlayerData.items, formattedInventory)
 end)
 
-RegisterNetEvent('qb-inventory:server:updateDrop', function(dropId, coords)
+RegisterNetEvent('ps-inventory:server:updateDrop', function(dropId, coords)
     Drops[dropId].coords = coords
 end)
 
-RegisterNetEvent('qb-inventory:server:snowball', function(action)
+RegisterNetEvent('ps-inventory:server:snowball', function(action)
     if action == 'add' then
-        AddItem(source, 'weapon_snowball', 1, false, false, 'qb-inventory:server:snowball')
+        AddItem(source, 'weapon_snowball', 1, false, false, 'ps-inventory:server:snowball')
     elseif action == 'remove' then
-        RemoveItem(source, 'weapon_snowball', 1, false, 'qb-inventory:server:snowball')
+        RemoveItem(source, 'weapon_snowball', 1, false, 'ps-inventory:server:snowball')
     end
 end)
 
 -- Callbacks
 
-QBCore.Functions.CreateCallback('qb-inventory:server:GetCurrentDrops', function(_, cb)
+QBCore.Functions.CreateCallback('ps-inventory:server:GetCurrentDrops', function(_, cb)
     cb(Drops)
 end)
 
-QBCore.Functions.CreateCallback('qb-inventory:server:createDrop', function(source, cb, item)
+QBCore.Functions.CreateCallback('ps-inventory:server:createDrop', function(source, cb, item)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if not Player then
@@ -313,7 +313,7 @@ QBCore.Functions.CreateCallback('qb-inventory:server:createDrop', function(sourc
                 slots = Config.DropSize.slots,
                 isOpen = true
             }
-            TriggerClientEvent('qb-inventory:client:setupDropTarget', -1, dropId)
+            TriggerClientEvent('ps-inventory:client:setupDropTarget', -1, dropId)
         else
             table.insert(Drops[newDropId].items, item)
         end
@@ -323,7 +323,7 @@ QBCore.Functions.CreateCallback('qb-inventory:server:createDrop', function(sourc
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-inventory:server:attemptPurchase', function(source, cb, data)
+QBCore.Functions.CreateCallback('ps-inventory:server:attemptPurchase', function(source, cb, data)
     local itemInfo = data.item
     local amount = data.amount
     local shop = string.gsub(data.shop, 'shop%-', '')
@@ -382,7 +382,7 @@ QBCore.Functions.CreateCallback('qb-inventory:server:attemptPurchase', function(
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-inventory:server:giveItem', function(source, cb, target, item, amount, slot, info)
+QBCore.Functions.CreateCallback('ps-inventory:server:giveItem', function(source, cb, target, item, amount, slot, info)
     local player = QBCore.Functions.GetPlayer(source)
     if not player or player.PlayerData.metadata['isdead'] or player.PlayerData.metadata['inlaststand'] or player.PlayerData.metadata['ishandcuffed'] then
         cb(false)
@@ -441,11 +441,11 @@ QBCore.Functions.CreateCallback('qb-inventory:server:giveItem', function(source,
     end
 
     if itemInfo.type == 'weapon' then checkWeapon(source, item) end
-    TriggerClientEvent('qb-inventory:client:giveAnim', source)
-    TriggerClientEvent('qb-inventory:client:ItemBox', source, itemInfo, 'remove', giveAmount)
-    TriggerClientEvent('qb-inventory:client:giveAnim', target)
-    TriggerClientEvent('qb-inventory:client:ItemBox', target, itemInfo, 'add', giveAmount)
-    if Player(target).state.inv_busy then TriggerClientEvent('qb-inventory:client:updateInventory', target) end
+    TriggerClientEvent('ps-inventory:client:giveAnim', source)
+    TriggerClientEvent('ps-inventory:client:ItemBox', source, itemInfo, 'remove', giveAmount)
+    TriggerClientEvent('ps-inventory:client:giveAnim', target)
+    TriggerClientEvent('ps-inventory:client:ItemBox', target, itemInfo, 'add', giveAmount)
+    if Player(target).state.inv_busy then TriggerClientEvent('ps-inventory:client:updateInventory', target) end
     cb(true)
 end)
 
@@ -492,7 +492,7 @@ local function getIdentifier(inventoryId, src)
     end
 end
 
-RegisterNetEvent('qb-inventory:server:SetInventoryData', function(fromInventory, toInventory, fromSlot, toSlot, fromAmount, toAmount)
+RegisterNetEvent('ps-inventory:server:SetInventoryData', function(fromInventory, toInventory, fromSlot, toSlot, fromAmount, toAmount)
     if toInventory:find('shop%-') then return end
     if not fromInventory or not toInventory or not fromSlot or not toSlot or not fromAmount or not toAmount or fromAmount < 0 or toAmount < 0 then return end
     local src = source

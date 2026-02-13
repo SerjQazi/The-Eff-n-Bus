@@ -35,8 +35,8 @@ QBCore.Commands.Add('giveitem', 'Give An Item (Admin Only)', { { name = 'id', he
 
             if AddItem(id, itemData['name'], amount, false, info, 'give item command') then
                 QBCore.Functions.Notify(source, Lang:t('notify.yhg') .. GetPlayerName(id) .. ' ' .. amount .. ' ' .. itemData['name'] .. '', 'success')
-                TriggerClientEvent('qb-inventory:client:ItemBox', id, itemData, 'add', amount)
-                if Player(id).state.inv_busy then TriggerClientEvent('qb-inventory:client:updateInventory', id) end
+                TriggerClientEvent('ps-inventory:client:ItemBox', id, itemData, 'add', amount)
+                if Player(id).state.inv_busy then TriggerClientEvent('ps-inventory:client:updateInventory', id) end
             else
                 QBCore.Functions.Notify(source, Lang:t('notify.cgitem'), 'error')
             end
@@ -72,10 +72,10 @@ QBCore.Commands.Add('randomitems', 'Receive random items', {}, false, function(s
         end
         if emptySlot then
             if AddItem(source, randitem.name, amount, emptySlot, false, 'random items command') then
-                TriggerClientEvent('qb-inventory:client:ItemBox', source, QBCore.Shared.Items[randitem.name], 'add')
+                TriggerClientEvent('ps-inventory:client:ItemBox', source, QBCore.Shared.Items[randitem.name], 'add')
                 player = QBCore.Functions.GetPlayer(source)
                 playerInventory = player.PlayerData.items
-                if Player(source).state.inv_busy then TriggerClientEvent('qb-inventory:client:updateInventory', source) end
+                if Player(source).state.inv_busy then TriggerClientEvent('ps-inventory:client:updateInventory', source) end
             end
             Wait(1000)
         end
@@ -109,7 +109,7 @@ RegisterCommand('hotbar', function(source)
         QBPlayer.PlayerData.items[4],
         QBPlayer.PlayerData.items[5],
     }
-    TriggerClientEvent('qb-inventory:client:hotbar', source, hotbarItems)
+    TriggerClientEvent('ps-inventory:client:hotbar', source, hotbarItems)
 end, false)
 
 RegisterCommand('inventory', function(source)
@@ -117,7 +117,7 @@ RegisterCommand('inventory', function(source)
     local QBPlayer = QBCore.Functions.GetPlayer(source)
     if not QBPlayer then return end
     if not QBPlayer or QBPlayer.PlayerData.metadata['isdead'] or QBPlayer.PlayerData.metadata['inlaststand'] or QBPlayer.PlayerData.metadata['ishandcuffed'] then return end
-    QBCore.Functions.TriggerClientCallback('qb-inventory:client:vehicleCheck', source, function(inventory, class)
+    QBCore.Functions.TriggerClientCallback('ps-inventory:client:vehicleCheck', source, function(inventory, class)
         if not inventory then return OpenInventory(source) end
         if inventory:find('trunk-') then
             OpenInventory(source, inventory, {

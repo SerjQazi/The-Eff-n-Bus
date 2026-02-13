@@ -42,3 +42,8 @@ end
 function QBCore.ShowSuccess(resource, msg)
     print('\x1b[32m[' .. resource .. ':LOG]\x1b[0m ' .. msg)
 end
+
+
+CreateThread(function()
+    print("WATER ITEM:", json.encode(QBCore.Shared.Items["water"]))
+end)

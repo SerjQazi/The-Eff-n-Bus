@@ -163,7 +163,7 @@ local function sellMaterials()
                 menu[#menu+1] = {
                     header = QBCore.Shared.Items[k].label,
                     txt = Lang:t('text.price', {price = v}),
-                    icon = "nui://qb-inventory/html/images/" .. QBCore.Shared.Items[k].name .. ".png",
+                    icon = "nui://ps-inventory/html/images/" .. QBCore.Shared.Items[k].name .. ".png",
                     action = function()
                         local dialog = exports['qb-input']:ShowInput({
                             header = Lang:t('text.sell') .. ' ' ..  QBCore.Shared.Items[k].label,

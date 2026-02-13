@@ -134,11 +134,11 @@ local function getItem(source, item, amount)
     if Config.LimitedMaterials then
         if not checkStock(source, item, amount) then return end
         Player.Functions.AddItem(item, amount)
-        TriggerClientEvent('qb-inventory:client:ItemBox', source, QBCore.Shared.Items[item], 'add', amount)
+        TriggerClientEvent('ps-inventory:client:ItemBox', source, QBCore.Shared.Items[item], 'add', amount)
         adjustStock(item, 'remove', amount)
     else
         Player.Functions.AddItem(item, amount)
-        TriggerClientEvent('qb-inventory:client:ItemBox', source, QBCore.Shared.Items[item], 'add', amount)
+        TriggerClientEvent('ps-inventory:client:ItemBox', source, QBCore.Shared.Items[item], 'add', amount)
     end
 end
 
@@ -168,7 +168,7 @@ RegisterNetEvent('qb-recyclejob:server:getItem', function()
     local luckyChance = math.random(1, 100)
     if luckyChance <= LuckyItemChance then 
         Player.Functions.AddItem(luckyItem, 1)
-        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[luckyItem], 'add', 1)
+        TriggerClientEvent('ps-inventory:client:ItemBox', src, QBCore.Shared.Items[luckyItem], 'add', 1)
     end
 end)
 

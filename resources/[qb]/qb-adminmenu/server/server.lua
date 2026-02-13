@@ -230,7 +230,7 @@ end)
 RegisterNetEvent('qb-admin:server:inventory', function(player)
     local src = source
     if QBCore.Functions.HasPermission(src, permissions['inventory']) or IsPlayerAceAllowed(src, 'command') then
-        exports['qb-inventory']:OpenInventoryById(src, player.id)
+        exports['ps-inventory']:OpenInventoryById(src, player.id)
     else
         BanPlayer(src)
     end
@@ -271,7 +271,7 @@ end)
 RegisterServerEvent('qb-admin:giveWeapon', function(weapon)
     local src = source
     if QBCore.Functions.HasPermission(src, 'admin') or IsPlayerAceAllowed(src, 'command') then
-        exports['qb-inventory']:AddItem(src, weapon, 1, false, false, 'qb-admin:giveWeapon')
+        exports['ps-inventory']:AddItem(src, weapon, 1, false, false, 'qb-admin:giveWeapon')
     else
         BanPlayer(src)
     end

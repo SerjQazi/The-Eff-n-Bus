@@ -28,7 +28,7 @@ end
 
 -- Callbacks
 
-QBCore.Functions.CreateClientCallback('qb-inventory:client:vehicleCheck', function(cb)
+QBCore.Functions.CreateClientCallback('ps-inventory:client:vehicleCheck', function(cb)
     local ped = PlayerPedId()
 
     -- Glovebox

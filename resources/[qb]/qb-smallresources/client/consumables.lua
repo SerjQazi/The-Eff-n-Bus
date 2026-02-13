@@ -159,7 +159,7 @@ RegisterNetEvent('consumables:client:Eat', function(itemName)
         coords = vec3(0.0, 0.0, -0.02),
         rotation = vec3(30, 0.0, 0.0),
     }, {}, function() -- Done
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items[itemName], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items[itemName], 'remove')
         TriggerServerEvent('consumables:server:addHunger', QBCore.Functions.GetPlayerData().metadata.hunger + Config.Consumables.eat[itemName])
         TriggerServerEvent('hud:server:RelieveStress', math.random(2, 4))
     end)
@@ -181,7 +181,7 @@ RegisterNetEvent('consumables:client:Drink', function(itemName)
         coords = vec3(0.0, 0.0, -0.05),
         rotation = vec3(0.0, 0.0, -40),
     }, {}, function() -- Done
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items[itemName], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items[itemName], 'remove')
         TriggerServerEvent('consumables:server:addThirst', QBCore.Functions.GetPlayerData().metadata.thirst + Config.Consumables.drink[itemName])
     end)
 end)
@@ -202,7 +202,7 @@ RegisterNetEvent('consumables:client:DrinkAlcohol', function(itemName)
         coords = vec3(0.0, 0.0, -0.05),
         rotation = vec3(0.0, 0.0, -40),
     }, {}, function() -- Done
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items[itemName], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items[itemName], 'remove')
         TriggerServerEvent('consumables:server:drinkAlcohol', itemName)
         TriggerServerEvent('consumables:server:addThirst', QBCore.Functions.GetPlayerData().metadata.thirst + Config.Consumables.alcohol[itemName])
         TriggerServerEvent('hud:server:RelieveStress', math.random(2, 4))
@@ -236,7 +236,7 @@ RegisterNetEvent('consumables:client:Custom', function(itemName)
             rotation = data.prop.rotation
         }, {}, function() -- Done
             ClearPedTasks(PlayerPedId())
-            TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items[itemName], 'remove')
+            TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items[itemName], 'remove')
             if data.replenish.type then
                 TriggerServerEvent('consumables:server:add' .. data.replenish.type, QBCore.Functions.GetPlayerData().metadata[string.lower(data.replenish.type)] + data.replenish.replenish)
             end
@@ -270,7 +270,7 @@ RegisterNetEvent('consumables:client:Cokebaggy', function()
     }, {}, {}, function() -- Done
         StopAnimTask(ped, 'switch@trevor@trev_smoking_meth', 'trev_smoking_meth_loop', 1.0)
         TriggerServerEvent('consumables:server:useCokeBaggy')
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['cokebaggy'], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['cokebaggy'], 'remove')
         TriggerEvent('evidence:client:SetStatus', 'widepupils', 200)
         cokeBaggyEffect()
     end, function() -- Cancel
@@ -293,7 +293,7 @@ RegisterNetEvent('consumables:client:Crackbaggy', function()
     }, {}, {}, function() -- Done
         StopAnimTask(ped, 'switch@trevor@trev_smoking_meth', 'trev_smoking_meth_loop', 1.0)
         TriggerServerEvent('consumables:server:useCrackBaggy')
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['crack_baggy'], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['crack_baggy'], 'remove')
         TriggerEvent('evidence:client:SetStatus', 'widepupils', 300)
         crackBaggyEffect()
     end, function() -- Cancel
@@ -315,7 +315,7 @@ RegisterNetEvent('consumables:client:EcstasyBaggy', function()
     }, {}, {}, function() -- Done
         StopAnimTask(PlayerPedId(), 'mp_suicide', 'pill', 1.0)
         TriggerServerEvent('consumables:server:useXTCBaggy')
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['xtcbaggy'], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['xtcbaggy'], 'remove')
         ecstasyEffect()
     end, function() -- Cancel
         StopAnimTask(PlayerPedId(), 'mp_suicide', 'pill', 1.0)
@@ -336,7 +336,7 @@ RegisterNetEvent('consumables:client:oxy', function()
     }, {}, {}, function() -- Done
         StopAnimTask(PlayerPedId(), 'mp_suicide', 'pill', 1.0)
         TriggerServerEvent('consumables:server:useOxy')
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['oxy'], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['oxy'], 'remove')
         ClearPedBloodDamage(PlayerPedId())
         healOxy()
     end, function() -- Cancel
@@ -358,7 +358,7 @@ RegisterNetEvent('consumables:client:meth', function()
     }, {}, {}, function() -- Done
         StopAnimTask(PlayerPedId(), 'switch@trevor@trev_smoking_meth', 'trev_smoking_meth_loop', 1.0)
         TriggerServerEvent('consumables:server:useMeth')
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['meth'], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['meth'], 'remove')
         TriggerEvent('evidence:client:SetStatus', 'widepupils', 300)
         TriggerEvent('evidence:client:SetStatus', 'agitated', 300)
         methBagEffect()
@@ -375,7 +375,7 @@ RegisterNetEvent('consumables:client:UseJoint', function()
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['joint'], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['joint'], 'remove')
         if IsPedInAnyVehicle(PlayerPedId(), false) then
             QBCore.Functions.PlayAnim('timetable@gardener@smoking_joint', 'smoke_idle', false)
         else
@@ -395,7 +395,7 @@ RegisterNetEvent('consumables:client:UseParachute', function()
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
         local ped = PlayerPedId()
-        TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['parachute'], 'remove')
+        TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['parachute'], 'remove')
         GiveWeaponToPed(ped, `GADGET_PARACHUTE`, 1, false, false)
         local parachuteData = {
             outfitData = { ['bag'] = { item = 7, texture = 0 } } -- Adding Parachute Clothing
@@ -416,7 +416,7 @@ RegisterNetEvent('consumables:client:ResetParachute', function()
             disableCombat = true,
         }, {}, {}, {}, function() -- Done
             local ped = PlayerPedId()
-            TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['parachute'], 'add')
+            TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['parachute'], 'add')
             local parachuteResetData = {
                 outfitData = { ['bag'] = { item = 0, texture = 0 } } -- Removing Parachute Clothing
             }
@@ -488,7 +488,7 @@ RegisterNetEvent('consumables:client:ResetArmor', function()
         }, {}, {}, {}, function() -- Done
             SetPedComponentVariation(ped, 9, currVest, currVestTexture, 2)
             SetPedArmour(ped, 0)
-            TriggerEvent('qb-inventory:client:ItemBox', QBCore.Shared.Items['heavyarmor'], 'add')
+            TriggerEvent('ps-inventory:client:ItemBox', QBCore.Shared.Items['heavyarmor'], 'add')
             TriggerServerEvent('consumables:server:resetArmor')
         end)
     else
@@ -501,7 +501,7 @@ end)
 --         local ped = PlayerPedId()
 --         SetPlayerParachuteSmokeTrailColor(ped, 255, 0, 0)
 --         SetPlayerCanLeaveParachuteSmokeTrail(ped, true)
---         TriggerEvent("qb-inventory:client:ItemBox", QBCore.Shared.Items["smoketrailred"], "remove")
+--         TriggerEvent("ps-inventory:client:ItemBox", QBCore.Shared.Items["smoketrailred"], "remove")
 --     else
 --         QBCore.Functions.Notify("You need to have a paracute to activate smoke!", "error")
 --     end

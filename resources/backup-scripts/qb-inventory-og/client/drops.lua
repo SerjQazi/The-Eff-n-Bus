@@ -6,7 +6,7 @@ CurrentDrop = nil
 -- Functions
 
 function GetDrops()
-    QBCore.Functions.TriggerCallback('qb-inventory:server:GetCurrentDrops', function(drops)
+    QBCore.Functions.TriggerCallback('ps-inventory:server:GetCurrentDrops', function(drops)
         if not drops then return end
         for k, v in pairs(drops) do
             local bag = NetworkGetEntityFromNetworkId(v.entityId)
@@ -17,7 +17,7 @@ function GetDrops()
                             icon = 'fas fa-backpack',
                             label = Lang:t('menu.o_bag'),
                             action = function()
-                                TriggerServerEvent('qb-inventory:server:openDrop', k)
+                                TriggerServerEvent('ps-inventory:server:openDrop', k)
                                 CurrentDrop = k
                             end,
                         },
@@ -31,14 +31,14 @@ end
 
 -- Events
 
-RegisterNetEvent('qb-inventory:client:removeDropTarget', function(dropId)
+RegisterNetEvent('ps-inventory:client:removeDropTarget', function(dropId)
     while not NetworkDoesNetworkIdExist(dropId) do Wait(10) end
     local bag = NetworkGetEntityFromNetworkId(dropId)
     while not DoesEntityExist(bag) do Wait(10) end
     exports['qb-target']:RemoveTargetEntity(bag)
 end)
 
-RegisterNetEvent('qb-inventory:client:setupDropTarget', function(dropId)
+RegisterNetEvent('ps-inventory:client:setupDropTarget', function(dropId)
     while not NetworkDoesNetworkIdExist(dropId) do Wait(10) end
     local bag = NetworkGetEntityFromNetworkId(dropId)
     while not DoesEntityExist(bag) do Wait(10) end
@@ -49,7 +49,7 @@ RegisterNetEvent('qb-inventory:client:setupDropTarget', function(dropId)
                 icon = 'fas fa-backpack',
                 label = Lang:t('menu.o_bag'),
                 action = function()
-                    TriggerServerEvent('qb-inventory:server:openDrop', newDropId)
+                    TriggerServerEvent('ps-inventory:server:openDrop', newDropId)
                     CurrentDrop = newDropId
                 end,
             },
@@ -89,7 +89,7 @@ end)
 -- NUI Callbacks
 
 RegisterNUICallback('DropItem', function(item, cb)
-    QBCore.Functions.TriggerCallback('qb-inventory:server:createDrop', function(dropId)
+    QBCore.Functions.TriggerCallback('ps-inventory:server:createDrop', function(dropId)
         if dropId then
             while not NetworkDoesNetworkIdExist(dropId) do Wait(10) end
             local bag = NetworkGetEntityFromNetworkId(dropId)
@@ -117,7 +117,7 @@ CreateThread(function()
                 SetEntityCoords(bagObject, x, y, z - 0.9, false, false, false, false)
                 FreezeEntityPosition(bagObject, true)
                 exports['qb-core']:HideText()
-                TriggerServerEvent('qb-inventory:server:updateDrop', heldDrop, coords)
+                TriggerServerEvent('ps-inventory:server:updateDrop', heldDrop, coords)
                 HoldingDrop = false
                 bagObject = nil
                 heldDrop = nil
