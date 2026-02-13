@@ -99,7 +99,8 @@ local function IsRadioOn()
 end
 
 local function DoRadioCheck()
-    hasRadio = QBCore.Functions.HasItem(Config.RadioItem, 1)
+    -- hasRadio = QBCore.Functions.HasItem(Config.RadioItem, 1)
+    hasRadio = QBCore.Functions.HasItem({ Config.RadioItem })
 end
 
 --Exports
