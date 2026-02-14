@@ -163,12 +163,19 @@ RegisterNetEvent('qb-shops:server:openShop', function(data)
         end
     end
 
-    exports['qb-inventory']:CreateShop({
+    -- exports['qb-inventory']:CreateShop({
+    --     name = shopName,
+    --     label = shopData.label,
+    --     slots = shopData.slots,
+    --     coords = shopData.coords,
+    --     items = items,
+    -- })
+    -- exports['qb-inventory']:OpenShop(src, shopName)
+    TriggerClientEvent("inventory:client:OpenInventory", src, nil, {
         name = shopName,
         label = shopData.label,
         slots = shopData.slots,
-        coords = shopData.coords,
-        items = items,
+        items = items
     })
-    exports['qb-inventory']:OpenShop(src, shopName)
+
 end)
